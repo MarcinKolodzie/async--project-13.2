@@ -1,4 +1,4 @@
-class Button {
+export class Button {
     constructor(label, onClick) {
         this.label = label
         this.onClick = onClick
@@ -26,3 +26,5 @@ class Button {
         return button
     }
 }
+
+export default Button
