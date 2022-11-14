@@ -6,18 +6,41 @@ export class ToDo {
     constructor(storageKey) {
         this.storageKey = storageKey || 'todo'
         this.container = null
-        
-        this.tasks = this.loadTasks() || []
+
+        this.tasks = []
+
+        this.isLoading = true
+
+        this.loadTasks()
     }
 
-    loadTasks(){
-        return JSON.parse(localStorage.getItem(this.storageKey))
-    }
-
-    setTasks(newTasks){
-        this.tasks = newTasks
-        localStorage.setItem(this.storageKey, JSON.stringify(this.tasks))
+    setLoading(newLoading){
+        this.isLoading = newLoading
         this.render()
+    }
+
+    loadTasks() {
+        return fetch('https://mk--sandbox-default-rtdb.firebaseio.com/todo.json')
+            .then((response) => response.json())
+            .then((data) => {
+                this.tasks = data
+                this.render()
+            })
+    }
+
+    setTasks(newTasks) {
+        return fetch(
+            'https://mk--sandbox-default-rtdb.firebaseio.com/todo.json',
+            {
+                method: 'PUT',
+                body: JSON.stringify(newTasks)
+            }
+        )
+            .then((response) => response.json())
+            .then((tasksSavedInDb) => {
+                this.tasks = tasksSavedInDb
+                this.render()
+            })
     }
 
     deleteTask(indexToDelete) {
@@ -66,6 +89,13 @@ export class ToDo {
         }
 
         this.container.innerHTML = ''
+
+        if(this.isLoading){
+            const text = document.createTextNode('Loading...')
+            this.container.appendChild(text)
+
+            return this.container
+        }
 
         const form = new Form('', (value) => this.addTask(value))
 
