@@ -20,15 +20,18 @@ export class ToDo {
     }
 
     loadTasks() {
+        this.setLoading(true)
         return fetch('https://mk--sandbox-default-rtdb.firebaseio.com/todo.json')
             .then((response) => response.json())
             .then((data) => {
                 this.tasks = data
                 this.render()
             })
+            .finally(() => this.setLoading(false))
     }
 
     setTasks(newTasks) {
+        this.setLoading(true)
         return fetch(
             'https://mk--sandbox-default-rtdb.firebaseio.com/todo.json',
             {
@@ -41,6 +44,7 @@ export class ToDo {
                 this.tasks = tasksSavedInDb
                 this.render()
             })
+            .finally(() => this.setLoading(false))
     }
 
     deleteTask(indexToDelete) {
