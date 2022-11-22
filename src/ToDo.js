@@ -2,6 +2,8 @@ import Task from './Task'
 import Form from './Form'
 import Loader from './Loader'
 
+const makeAPI_URL = (key) => `https://mk--sandbox-default-rtdb.firebaseio.com/todo/${key}/.json`
+
 export class ToDo {
 
     constructor(storageKey) {
@@ -22,10 +24,10 @@ export class ToDo {
 
     loadTasks() {
         this.setLoading(true)
-        return fetch('https://mk--sandbox-default-rtdb.firebaseio.com/todo.json')
+        return fetch(makeAPI_URL(this.storageKey))
             .then((response) => response.json())
             .then((data) => {
-                this.tasks = data
+                this.tasks = data || []
                 this.render()
             })
             .finally(() => this.setLoading(false))
@@ -34,7 +36,7 @@ export class ToDo {
     setTasks(newTasks) {
         this.setLoading(true)
         return fetch(
-            'https://mk--sandbox-default-rtdb.firebaseio.com/todo.json',
+            makeAPI_URL(this.storageKey),
             {
                 method: 'PUT',
                 body: JSON.stringify(newTasks)
